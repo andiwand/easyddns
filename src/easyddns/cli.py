@@ -3,7 +3,7 @@ import json
 from selenium import webdriver
 from easyname.bot import EasynameBot
 
-from easyname.ddns.server import Server
+from easyddns.server import Server
 
 EXAMPLE_SETTINGS = """
 {
@@ -53,16 +53,16 @@ def load(path):
 
 def main():
     parser = argparse.ArgumentParser(description="easyname ddns proxy server")
-    parser.add_argument("config", dest="path", help="path to the config file")
+    parser.add_argument("config", help="path to the config file")
     parser.add_argument("-c", dest="create", action="store_const", const=True, help="create sample config")
     args = parser.parse_args()
     
-    if args.path:
-        file = open(args.config, "w")
+    if args.create:
+        file = open(args.config, "wb")
         file.write(EXAMPLE_SETTINGS)
         file.close()
     else:
-        server = load(args.path)
+        server = load(args.config)
         print("loaded")
         server.serve_forever()
 
