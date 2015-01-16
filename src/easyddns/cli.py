@@ -8,11 +8,12 @@ from easyddns.server import Server
 EXAMPLE_SETTINGS = """
 {
     "port": "65500",
-    "phantomjs": "/path/to/phantomjs or empty if it"s in the PATH",
+    "phantomjs": "/path/to/phantomjs or empty if it's in the PATH",
     "easyname": {
         "username": "...",
         "password": "..."
     },
+    "logfile": "/path/to/logfile or empty to disable"
     "users": [
         {
             "username": "user1",
@@ -38,13 +39,14 @@ def load(path):
     file = open(path)
     settings = json.load(file)
     
+    logfile = settings.get("logfile", None)
     phantomjs = settings.get("phantomjs", None)
     if not phantomjs: phantomjs = "phantomjs"
     driver = webdriver.PhantomJS(phantomjs)
     easyname = EasynameBot(driver)
     
     easyname.auth(settings["easyname"]["username"], settings["easyname"]["password"])
-    server = Server(("", int(settings["port"])), easyname)
+    server = Server(("", int(settings["port"])), easyname, debug_out=open(logfile))
     for user in settings["users"]:
         server.add_user(user["username"], user["password"])
         for permission in user["permissions"]:
