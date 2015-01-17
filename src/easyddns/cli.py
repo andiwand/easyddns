@@ -13,7 +13,6 @@ EXAMPLE_SETTINGS = """
         "username": "...",
         "password": "..."
     },
-    "logfile": "/path/to/logfile or empty to disable"
     "users": [
         {
             "username": "user1",
@@ -39,14 +38,13 @@ def load(path):
     file = open(path)
     settings = json.load(file)
     
-    logfile = settings.get("logfile", None)
     phantomjs = settings.get("phantomjs", None)
     if not phantomjs: phantomjs = "phantomjs"
     driver = webdriver.PhantomJS(phantomjs)
     easyname = EasynameBot(driver)
     
     easyname.auth(settings["easyname"]["username"], settings["easyname"]["password"])
-    server = Server(("", int(settings["port"])), easyname, debug_out=open(logfile))
+    server = Server(("", int(settings["port"])), easyname)
     for user in settings["users"]:
         server.add_user(user["username"], user["password"])
         for permission in user["permissions"]:
@@ -65,7 +63,6 @@ def main():
         file.close()
     else:
         server = load(args.config)
-        print("loaded")
         server.serve_forever()
 
 if __name__ == "__main__":
