@@ -5,7 +5,7 @@ from easyname.bot import EasynameBot
 
 from easyddns.server import Server
 
-EXAMPLE_SETTINGS = """
+EXAMPLE_CONFIG = """
 {
     "port": "65500",
     "phantomjs": "/path/to/phantomjs or empty if it's in the PATH",
@@ -59,7 +59,7 @@ def main():
     
     if args.create:
         file = open(args.config, "wb")
-        file.write(EXAMPLE_SETTINGS)
+        file.write(EXAMPLE_CONFIG)
         file.close()
     else:
         server = load(args.config)
