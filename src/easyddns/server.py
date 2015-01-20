@@ -1,3 +1,4 @@
+import traceback
 import time
 import base64
 import socketserver
@@ -114,4 +115,5 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 self.server.update(domainid, recordid, content)
                 self.do_HEAD(msg="updated")
             except:
+                self.server.debug("exception raised:\n" + traceback.format_exc())
                 self.do_ERROR(500, "update failed")
