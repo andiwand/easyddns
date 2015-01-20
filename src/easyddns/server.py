@@ -6,23 +6,28 @@ import http.server
 import urllib.parse as urlparse
 
 class Server(socketserver.TCPServer):
-    def __init__(self, server_address, easyname, bind_and_activate=True, debug=True):
+    def __init__(self, server_address, easyname_factory, bind_and_activate=True, debug=True):
         self.__debug = debug
         self.debug("open tcp socket %s ..." % str(server_address))
         socketserver.TCPServer.__init__(self, server_address, Handler, bind_and_activate)
         self.__auth_users = []
         self.__auth_records = {}
-        self.__easyname = easyname
+        self.__easyname_factory = easyname_factory
         self.__domain_ids = {}
         self.__record_ids = {}
         self.__init_easyname()
+    def __create_easyname(self):
+        self.debug("get easyname instance ...")
+        easyname = self.__easyname_factory()
+        return easyname
     def __init_easyname(self):
+        easyname = self.__create_easyname()
         self.debug("init easyname ...")
-        for domainid, domain in self.__easyname.domains():
+        for domainid, domain in easyname.domains():
             if not domainid or not domain: continue
             self.debug("found domain %s with id %s" % (domain, domainid))
             self.__domain_ids[domain] = domainid
-            for recordid, record, record_type, _, _, _ in self.__easyname.dns_entries(domainid):
+            for recordid, record, record_type, _, _, _ in easyname.dns_entries(domainid):
                 self.debug("found record %s with id %s" % (record, recordid))
                 if not recordid or not record or not record_type: continue
                 if record_type not in ("A", "AAAA", "CNAME"): continue
@@ -48,8 +53,9 @@ class Server(socketserver.TCPServer):
     def auth_record(self, username, record):
         return record in self.__auth_records.get(username, set())
     def update(self, domainid, recordid, content):
+        easyname = self.__create_easyname()
         self.debug("update record (domain id = %s, record id = %s) with %s" % (domainid, recordid, content))
-        self.__easyname.dns_edit(domainid, recordid, None, None, content, None, None)
+        easyname.dns_edit(domainid, recordid, None, None, content, None, None)
 
 class Handler(http.server.BaseHTTPRequestHandler):
     def __init__(self, request, client_address, server):

@@ -34,22 +34,24 @@ EXAMPLE_CONFIG = """
 }
 """.strip().encode("utf-8")
 
-def load(path):
-    file = open(path)
-    settings = json.load(file)
-    
-    phantomjs = settings.get("phantomjs", None)
-    if not phantomjs: phantomjs = "phantomjs"
-    driver = webdriver.PhantomJS(phantomjs)
-    easyname = EasynameBot(driver)
-    
-    easyname.auth(settings["easyname"]["username"], settings["easyname"]["password"])
-    server = Server(("", int(settings["port"])), easyname)
-    for user in settings["users"]:
-        server.add_user(user["username"], user["password"])
-        for permission in user["permissions"]:
-            server.add_record(user["username"], permission)
-    return server
+class easymanager:
+    def __init__(self, config_path):
+        file = open(config_path)
+        self.__settings = json.load(file)
+    def create_easyname(self):
+        phantomjs = self.__settings.get("phantomjs", None)
+        if not phantomjs: phantomjs = "phantomjs"
+        driver = webdriver.PhantomJS(phantomjs)
+        easyname = EasynameBot(driver)
+        easyname.auth(self.__settings["easyname"]["username"], self.__settings["easyname"]["password"])
+        return easyname
+    def create_server(self):
+        server = Server(("", int(self.__settings["port"])), self.create_easyname)
+        for user in self.__settings["users"]:
+            server.add_user(user["username"], user["password"])
+            for permission in user["permissions"]:
+                server.add_record(user["username"], permission)
+        return server
 
 def main():
     parser = argparse.ArgumentParser(description="easyname ddns proxy server")
@@ -62,7 +64,8 @@ def main():
         file.write(EXAMPLE_CONFIG)
         file.close()
     else:
-        server = load(args.config)
+        manager = easymanager(args.config)
+        server = manager.create_server()
         server.serve_forever()
 
 if __name__ == "__main__":
