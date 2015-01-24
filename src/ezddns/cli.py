@@ -1,14 +1,16 @@
+import os
 import argparse
 import json
 from selenium import webdriver
-from easyname.bot import EasynameBot
+from ezname.bot import EasynameBot
 
-from easyddns.server import Server
+from ezddns.server import Server
 
 EXAMPLE_CONFIG = """
 {
     "port": "65500",
     "phantomjs": "/path/to/phantomjs or empty if it's in the PATH",
+    "phantomjs_log": "/path/to/log or empty if disable",
     "easyname": {
         "username": "...",
         "password": "..."
@@ -40,8 +42,10 @@ class easymanager:
         self.__settings = json.load(file)
     def create_easyname(self):
         phantomjs = self.__settings.get("phantomjs", None)
+        phantomjs_log = self.__settings.get("phantomjs_log", None)
         if not phantomjs: phantomjs = "phantomjs"
-        driver = webdriver.PhantomJS(phantomjs)
+        if not phantomjs_log: phantomjs_log = os.devnull
+        driver = webdriver.PhantomJS(phantomjs, service_log_path=phantomjs_log)
         easyname = EasynameBot(driver)
         easyname.auth(self.__settings["easyname"]["username"], self.__settings["easyname"]["password"])
         return easyname

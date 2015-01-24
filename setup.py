@@ -1,18 +1,18 @@
 from setuptools import setup
 
 setup(
-    name="easyddns",
+    name="ezddns",
     version="0.0.1",
-    url="https://github.com/andiwand/easyddns",
+    url="https://github.com/andiwand/ezddns",
     license="GNU Lesser General Public License",
     author="Andreas Stefl",
-    install_requires=["easyname.py"],
+    install_requires=["ezname"],
     author_email="stefl.andreas@gmail.com",
     description="easyname domain ddns proxy",
     long_description="",
     package_dir={"": "src"},
     packages=["easyddns"],
     platforms="any",
-    dependency_links=["https://github.com/andiwand/easyname.py/tarball/master#egg=easyname.py"],
-    entry_points={'console_scripts':['easyddns = easyddns.cli:main']},
+    dependency_links=["https://github.com/andiwand/ezname/tarball/master#egg=easyname.py"],
+    entry_points={'console_scripts':['ezddns = ezddns.cli:main']},
 )
