@@ -11,7 +11,7 @@ setup(
     description="easyname domain ddns proxy",
     long_description="",
     package_dir={"": "src"},
-    packages=["easyddns"],
+    packages=["ezddns"],
     platforms="any",
     dependency_links=["https://github.com/andiwand/ezname/tarball/master#egg=easyname.py"],
     entry_points={'console_scripts':['ezddns = ezddns.cli:main']},
