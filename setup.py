@@ -13,6 +13,6 @@ setup(
     package_dir={"": "src"},
     packages=["ezddns"],
     platforms="any",
-    dependency_links=["https://github.com/andiwand/ezname/tarball/master#egg=easyname.py"],
+    dependency_links=["https://github.com/andiwand/ezname/tarball/master#egg=ezname"],
     entry_points={'console_scripts':['ezddns = ezddns.cli:main']},
 )
